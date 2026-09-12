@@ -5,6 +5,11 @@ and upload a signed IPA to TestFlight from a release tag. A signed release still
 requires access to the Apple Developer organization that owns the app record,
 identifiers, and Network Extension capability.
 
+Contributors do not need Apple credentials. Forks should run only the unsigned
+pull-request checks. Signing secrets, release tags, TestFlight uploads, and App
+Store submission belong exclusively to maintainers of the upstream repository
+who have access to the owning Apple Developer organization.
+
 ## Ownership prerequisites
 
 - The Apple Developer Program membership must be an **organization**. Apple does
@@ -23,7 +28,9 @@ configuration intentionally targets the existing Hiddify App Store record.
 
 ## GitHub Actions secrets
 
-Configure these Actions secrets on the release repository:
+Upstream maintainers configure these Actions secrets on the release repository.
+Do not copy signing material or App Store Connect credentials into contributor
+forks:
 
 | Secret | Purpose |
 | --- | --- |
@@ -63,15 +70,16 @@ Keep the key and signing material only in Actions secrets; never commit them.
 
 ## Release flow
 
-1. Open a pull request and require CI to pass. The iOS job compiles the app and
-   packet-tunnel extension with `--no-codesign` on `macos-26` / Xcode 26.
-2. Merge the reviewed change to `main`.
-3. Run `.github/change_version.sh` with the intended semantic version. Confirm
-   the generated commit and tag before pushing.
-4. A `vX.Y.Z` tag triggers the Release workflow. The iOS matrix job creates the
-   signed IPA; `upload-to-testflight` uploads that unchanged artifact using the
-   App Store Connect API key.
-5. In App Store Connect, wait for processing, resolve any compliance warnings,
+1. A contributor opens a pull request from a fork and requires CI to pass. The
+   iOS job compiles the app and packet-tunnel extension with `--no-codesign` on
+   `macos-26` / Xcode 26. Fork CI must not contain Apple signing secrets.
+2. Upstream maintainers review and merge the change to `main`.
+3. An upstream maintainer runs `.github/change_version.sh` with the intended
+   semantic version and confirms the generated commit and tag before pushing.
+4. A `vX.Y.Z` tag in the upstream repository triggers the Release workflow. The
+   iOS matrix job creates the signed IPA; `upload-to-testflight` uploads that
+   unchanged artifact using the upstream App Store Connect API key.
+5. Upstream maintainers wait for processing, resolve any compliance warnings,
    attach the build to the version, complete Review Notes, and submit for review.
 
 The release workflow deliberately fails when iOS fails; it must never publish a
