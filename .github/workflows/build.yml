@@ -51,11 +51,12 @@ jobs:
       - name: Validate iOS release configuration
         run: python3 .github/scripts/validate_ios_release_config.py
 
-      - name: Analyze Dart and Flutter sources
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
-          
       - name: Prepare
         run: make linux-amd64-prepare
+
+      - name: Analyze Dart and Flutter sources
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+
       - name: Test
         run: flutter test
 
