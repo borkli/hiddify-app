@@ -45,8 +45,15 @@ public class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoc
         if options.getAutoRoute() {
             settings.mtu = NSNumber(value: options.getMTU())
 
-           let dnsServer = try options.getDNSServerAddress()
-            let dnsSettings = NEDNSSettings(servers: [dnsServer.value,"fdfe:dcba:9876::1"])
+            let dnsServerIterator = try options.getDNSServerAddress()
+            var dnsServers: [String] = []
+            while dnsServerIterator.hasNext() {
+                dnsServers.append(dnsServerIterator.next())
+            }
+            if !dnsServers.contains("fdfe:dcba:9876::1") {
+                dnsServers.append("fdfe:dcba:9876::1")
+            }
+            let dnsSettings = NEDNSSettings(servers: dnsServers)
             dnsSettings.matchDomains = [""]
             dnsSettings.matchDomainsNoSearch = true
             settings.dnsSettings = dnsSettings
@@ -213,9 +220,11 @@ public class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoc
         }
     }
 
-    public func usePlatformAutoDetectControl() -> Bool {
+    public func usePlatformAutoDetectInterfaceControl() -> Bool {
         false
     }
+
+    public func autoDetectInterfaceControl(_: Int32) throws {}
     public func findConnectionOwner(_ ipProtocol: Int32, sourceAddress: String?, sourcePort: Int32, destinationAddress: String?, destinationPort: Int32) throws -> LibboxConnectionOwner {
         #if os(macOS)
             if Variant.useSystemExtension {
@@ -469,7 +478,7 @@ public class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoc
         nwMonitor = nil
     }
 
-    public func send(_ notification: LibboxNotification?) throws {
+    public func sendNotification(_ notification: LibboxNotification?) throws {
         #if !os(tvOS)
             guard let notification else {
                 return
@@ -499,6 +508,12 @@ public class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoc
         #endif
     }
 
+    public func startNeighborMonitor(_: LibboxNeighborUpdateListenerProtocol?) throws {}
+
+    public func closeNeighborMonitor(_: LibboxNeighborUpdateListenerProtocol?) throws {}
+
+    public func registerMyInterface(_: String?) {}
+
     public func localDNSTransport() -> (any LibboxLocalDNSTransportProtocol)? {
         nil
     }
@@ -506,6 +521,4 @@ public class ExtensionPlatformInterface: NSObject, LibboxPlatformInterfaceProtoc
     public func systemCertificates() -> (any LibboxStringIteratorProtocol)? {
         nil
     }
-    public func autoDetectControl(_: Int32) throws {}
-
 }
