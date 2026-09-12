@@ -286,6 +286,9 @@ android-aab-release:
 
 windows-release: windows-zip-release windows-exe-release windows-msix-release
 
+windows-validate:
+	flutter build windows --release --target $(TARGET) $(BUILD_ARGS)
+
 windows-zip-release:
 	fastforge package \
 	  --platform windows \
