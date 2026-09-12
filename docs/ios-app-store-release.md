@@ -72,7 +72,9 @@ Keep the key and signing material only in Actions secrets; never commit them.
 
 1. A contributor opens a pull request from a fork and requires CI to pass. The
    iOS job compiles the app and packet-tunnel extension with `--no-codesign` on
-   `macos-26` / Xcode 26. Fork CI must not contain Apple signing secrets.
+   `macos-26` / Xcode 26, builds the simulator variant, installs it, and verifies
+   that the production app remains running after launch. Fork CI must not contain
+   Apple signing secrets.
 2. Upstream maintainers review and merge the change to `main`.
 3. An upstream maintainer runs `.github/change_version.sh` with the intended
    semantic version and confirms the generated commit and tag before pushing.
@@ -80,7 +82,9 @@ Keep the key and signing material only in Actions secrets; never commit them.
    iOS matrix job creates the signed IPA; `upload-to-testflight` uploads that
    unchanged artifact using the upstream App Store Connect API key.
 5. Upstream maintainers wait for processing, resolve any compliance warnings,
-   attach the build to the version, complete Review Notes, and submit for review.
+   invite the contributor as an external TestFlight tester, test the VPN on
+   physical iPhone and iPad hardware, attach the build to the version, complete
+   Review Notes, and submit for review.
 
 The release workflow deliberately fails when iOS fails; it must never publish a
 successful-looking release while silently omitting the IPA.
