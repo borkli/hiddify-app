@@ -72,9 +72,10 @@ Keep the key and signing material only in Actions secrets; never commit them.
 
 1. A contributor opens a pull request from a fork and requires CI to pass. The
    iOS job compiles the app and packet-tunnel extension with `--no-codesign` on
-   `macos-26` / Xcode 26, builds the simulator variant, installs it, and verifies
-   that the production app remains running after launch. Fork CI must not contain
-   Apple signing secrets.
+   `macos-26` / Xcode 26, builds the production entry point for Simulator in
+   Flutter's supported debug mode, installs it, and verifies that the app remains
+   running after launch. The separate unsigned device build validates release
+   mode. Fork CI must not contain Apple signing secrets.
 2. Upstream maintainers review and merge the change to `main`.
 3. An upstream maintainer runs `.github/change_version.sh` with the intended
    semantic version and confirms the generated commit and tag before pushing.
