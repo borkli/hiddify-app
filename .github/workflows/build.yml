@@ -50,6 +50,9 @@ jobs:
 
       - name: Validate iOS release configuration
         run: python3 .github/scripts/validate_ios_release_config.py
+
+      - name: Analyze Dart and Flutter sources
+        run: flutter analyze --no-fatal-infos --no-fatal-warnings
           
       - name: Prepare
         run: make linux-amd64-prepare
@@ -265,6 +268,12 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: make ios-validate
+
+      - name: Smoke test production app in iOS Simulator
+        if: matrix.platform == 'ios' && !inputs.upload-artifact
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        run: bash .github/scripts/smoke_test_ios_simulator.sh
 
       - name: Validate Windows without code signing
         if: matrix.platform == 'windows' && !inputs.upload-artifact
