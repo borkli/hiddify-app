@@ -471,7 +471,7 @@ ios-validate:
 	flutter build ios --release --no-codesign --target $(TARGET) $(BUILD_ARGS)
 
 ios-simulator-validate:
-	flutter build ios --simulator --release --target $(TARGET) $(BUILD_ARGS)
+	flutter build ios --simulator --debug --target $(TARGET) $(BUILD_ARGS)
 
 android-libs:
 	$(MKDIR) $(ANDROID_OUT) || echo Folder already exists. Skipping...
