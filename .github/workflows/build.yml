@@ -380,9 +380,6 @@ jobs:
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db ||echo ok
           rm ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision ||echo ok
   update-draft:
-    permissions:
-      actions: read
-      contents: write
     if: ${{ inputs.upload-artifact }}
     needs: [build]
     runs-on: ubuntu-latest
@@ -434,9 +431,6 @@ jobs:
           prerelease: true
 
   upload-release:
-    permissions:
-      actions: read
-      contents: write
     if: ${{ inputs.upload-artifact && inputs.tag-name != 'draft' }}
     needs: [build]
     runs-on: ubuntu-latest
