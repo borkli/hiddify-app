@@ -254,7 +254,7 @@ jobs:
 
 
       - name: Build ${{ matrix.platform }}
-        if: matrix.platform != 'ios' || inputs.upload-artifact
+        if: (matrix.platform != 'ios' && matrix.platform != 'windows') || inputs.upload-artifact
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
@@ -265,6 +265,12 @@ jobs:
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: make ios-validate
+
+      - name: Validate Windows without code signing
+        if: matrix.platform == 'windows' && !inputs.upload-artifact
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        run: make windows-validate
 
       - name: Code Sign
         if: ${{ inputs.upload-artifact && startsWith(matrix.platform,'windows') }}
@@ -279,7 +285,7 @@ jobs:
           description: 'Hiddify'
 
       - name: Copy to out Windows
-        if: matrix.platform == 'windows'
+        if: matrix.platform == 'windows' && inputs.upload-artifact
         shell: pwsh
         run: |
           Get-ChildItem -Path dist -Recurse | Select-Object FullName
