@@ -470,6 +470,9 @@ ios-release: #not tested
 ios-validate:
 	flutter build ios --release --no-codesign --target $(TARGET) $(BUILD_ARGS)
 
+ios-simulator-validate:
+	flutter build ios --simulator --release --target $(TARGET) $(BUILD_ARGS)
+
 android-libs:
 	$(MKDIR) $(ANDROID_OUT) || echo Folder already exists. Skipping...
 	curl -L $(CORE_URL)/$(CORE_NAME)-android.tar.gz | tar xz -C $(ANDROID_OUT)/
