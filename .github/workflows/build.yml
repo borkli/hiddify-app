@@ -272,6 +272,7 @@ jobs:
 
       - name: Smoke test production app in iOS Simulator
         if: matrix.platform == 'ios' && !inputs.upload-artifact
+        timeout-minutes: 30
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: bash .github/scripts/smoke_test_ios_simulator.sh
